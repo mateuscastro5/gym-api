@@ -1,0 +1,754 @@
+{
+  "info": {
+    "name": "Academia API - Coleção Completa",
+    "description": "Coleção completa para testar a API da Academia com todos os endpoints e recursos de segurança",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "🔐 Autenticação",
+      "item": [
+        {
+          "name": "Registrar Usuário",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Teste Usuario\",\n  \"email\": \"teste@academia.com\",\n  \"senha\": \"Teste@123456\",\n  \"nivel_acesso\": 1,\n  \"pergunta_seguranca\": \"Qual sua cor favorita?\",\n  \"resposta_seguranca\": \"azul\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios"]
+            }
+          }
+        },
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('token', response.token);",
+                  "    console.log('Token salvo:', response.token.substring(0, 50) + '...');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@academia.com\",\n  \"senha\": \"Admin@123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login Usuário Comum",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@academia.com\",\n  \"senha\": \"User@123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "login"]
+            }
+          }
+        },
+        {
+          "name": "Solicitar Recuperação de Senha",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mateus.castro2011@gmail.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/recuperar-senha/solicitar",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "recuperar-senha", "solicitar"]
+            }
+          }
+        },
+        {
+          "name": "Redefinir Senha com Código",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"mateus.castro2011@gmail.com\",\n  \"codigo\": \"9487\",\n  \"nova_senha\": \"NovaSenha@123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/redefinir-senha",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "redefinir-senha"]
+            }
+          }
+        },
+        {
+          "name": "Ativar Conta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"codigo_de_ativacao_aqui\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/ativar",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "ativar"]
+            }
+          }
+        },
+        {
+          "name": "Alterar Senha (Logado)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senha_atual\": \"Admin@123456\",\n  \"nova_senha\": \"NovaSenh@789\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/alterar-senha",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "alterar-senha"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👥 Usuários",
+      "item": [
+        {
+          "name": "Listar Usuários (Admin)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios"]
+            }
+          }
+        },
+        {
+          "name": "Buscar Usuário por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "1"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar Usuário",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Nome Atualizado\",\n  \"nivel_acesso\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deletar Usuário (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏃‍♂️ Alunos",
+      "item": [
+        {
+          "name": "Listar Alunos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/alunos",
+              "host": ["{{baseUrl}}"],
+              "path": ["alunos"]
+            }
+          }
+        },
+        {
+          "name": "Buscar Aluno por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/alunos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["alunos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Criar Aluno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Pedro Henrique\",\n  \"email\": \"pedro.henrique@email.com\",\n  \"telefone\": \"(11) 99999-4444\",\n  \"data_nascimento\": \"1988-03-20\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/alunos",
+              "host": ["{{baseUrl}}"],
+              "path": ["alunos"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar Aluno",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"João Silva Atualizado\",\n  \"telefone\": \"(11) 99999-1111\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/alunos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["alunos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deletar Aluno (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/alunos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["alunos", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👨‍🏫 Instrutores",
+      "item": [
+        {
+          "name": "Listar Instrutores",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/instrutores",
+              "host": ["{{baseUrl}}"],
+              "path": ["instrutores"]
+            }
+          }
+        },
+        {
+          "name": "Buscar Instrutor por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/instrutores/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["instrutores", "1"]
+            }
+          }
+        },
+        {
+          "name": "Criar Instrutor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Lucas Fitness\",\n  \"email\": \"lucas.fitness@academia.com\",\n  \"telefone\": \"(11) 88888-4444\",\n  \"especialidade\": \"CrossFit\",\n  \"salario\": 4000.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/instrutores",
+              "host": ["{{baseUrl}}"],
+              "path": ["instrutores"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar Instrutor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Ana Costa Silva\",\n  \"salario\": 3800.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/instrutores/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["instrutores", "1"]
+            }
+          }
+        },
+        {
+          "name": "Deletar Instrutor (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/instrutores/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["instrutores", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💪 Treinos",
+      "item": [
+        {
+          "name": "Listar Treinos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/treinos",
+              "host": ["{{baseUrl}}"],
+              "path": ["treinos"]
+            }
+          }
+        },
+        {
+          "name": "Buscar Treino por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/treinos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["treinos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Criar Treino (com Transação)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"aluno_id\": 1,\n  \"instrutor_id\": 1,\n  \"nome\": \"Treino Avançado\",\n  \"descricao\": \"Treino para alunos experientes\",\n  \"data_inicio\": \"2025-07-06T09:00:00Z\",\n  \"data_fim\": \"2025-07-06T10:30:00Z\",\n  \"valor\": 90.00,\n  \"forma_pagamento\": \"CARTAO_CREDITO\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/treinos",
+              "host": ["{{baseUrl}}"],
+              "path": ["treinos"]
+            }
+          }
+        },
+        {
+          "name": "Atualizar Treino",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Treino Atualizado\",\n  \"descricao\": \"Descrição atualizada\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/treinos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["treinos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Finalizar Treino",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/treinos/1/finalizar",
+              "host": ["{{baseUrl}}"],
+              "path": ["treinos", "1", "finalizar"]
+            }
+          }
+        },
+        {
+          "name": "Deletar Treino (Soft Delete - Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/treinos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["treinos", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💳 Pagamentos",
+      "item": [
+        {
+          "name": "Listar Pagamentos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/pagamentos",
+              "host": ["{{baseUrl}}"],
+              "path": ["pagamentos"]
+            }
+          }
+        },
+        {
+          "name": "Buscar Pagamento por ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/pagamentos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["pagamentos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Confirmar Pagamento",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"observacoes\": \"Pagamento confirmado via PIX\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pagamentos/1/confirmar",
+              "host": ["{{baseUrl}}"],
+              "path": ["pagamentos", "1", "confirmar"]
+            }
+          }
+        },
+        {
+          "name": "Deletar Pagamento (Admin)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/pagamentos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["pagamentos", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📧 Emails",
+      "item": [
+        {
+          "name": "Enviar Relatório para Aluno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assunto\": \"Relatório Mensal de Treinos\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/email/aluno/1/relatorio",
+              "host": ["{{baseUrl}}"],
+              "path": ["email", "aluno", "1", "relatorio"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📊 Logs e Auditoria (Admin)",
+      "item": [
+        {
+          "name": "Listar Logs",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/logs",
+              "host": ["{{baseUrl}}"],
+              "path": ["logs"]
+            }
+          }
+        },
+        {
+          "name": "Listar Logs por Usuário",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/logs/usuario/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["logs", "usuario", "1"]
+            }
+          }
+        },
+        {
+          "name": "Listar Logs por Ação",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/logs?acao=LOGIN",
+              "host": ["{{baseUrl}}"],
+              "path": ["logs"],
+              "query": [
+                {
+                  "key": "acao",
+                  "value": "LOGIN"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💾 Backup (Admin)",
+      "item": [
+        {
+          "name": "Realizar Backup",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/backup/backup",
+              "host": ["{{baseUrl}}"],
+              "path": ["backup", "backup"]
+            }
+          }
+        },
+        {
+          "name": "Listar Backups",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/backup/list",
+              "host": ["{{baseUrl}}"],
+              "path": ["backup", "list"]
+            }
+          }
+        },
+        {
+          "name": "Restaurar Backup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"filename\": \"backup_2025-07-04_123456.sql\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/backup/restore",
+              "host": ["{{baseUrl}}"],
+              "path": ["backup", "restore"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🧪 Testes de Segurança",
+      "item": [
+        {
+          "name": "Tentar Acessar sem Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/alunos",
+              "host": ["{{baseUrl}}"],
+              "path": ["alunos"]
+            }
+          }
+        },
+        {
+          "name": "Tentar Deletar sem Nível Admin",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/alunos/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["alunos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Login com Senha Inválida (Teste Bloqueio)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@academia.com\",\n  \"senha\": \"senha_errada\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "login"]
+            }
+          }
+        },
+        {
+          "name": "Testar Múltiplas Tentativas Inválidas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@academia.com\",\n  \"senha\": \"senha_incorreta\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "login"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
